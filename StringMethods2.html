@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python String Methods Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:       #004346;
+  --teal-dark:  #002829;
+  --teal-dim:   #1a5e61;
+  --teal-mid:   #2e8285;
+  --teal-soft:  #d0e8e9;
+  --teal-ghost: #eaf4f4;
+  --cream:      #f0ede5;
+  --cream-lt:   #f8f6f1;
+  --cream-md:   #e3dfd6;
+  --cream-dk:   #cbc7bd;
+  --white:      #ffffff;
+  --tx-h:       #001e20;
+  --tx-b:       #1c3a3c;
+  --tx-s:       #4a7375;
+  --tx-m:       #7e9fa1;
+  --warn-bg:    #fffbf0;
+  --warn-bd:    #d4a800;
+  --warn-tx:    #5c4200;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px;
+  --shadow: 0 4px 24px rgba(0,67,70,0.09);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cream:      #001a1c;
+    --cream-lt:   #002426;
+    --cream-md:   #003234;
+    --cream-dk:   #004042;
+    --white:      #002022;
+    --tx-h:       #e0f2f2;
+    --tx-b:       #a8d0d2;
+    --tx-s:       #6a9ea0;
+    --tx-m:       #437476;
+    --teal-ghost: #002e30;
+    --teal-soft:  #003840;
+    --warn-bg:    #221800;
+    --warn-bd:    #9a7200;
+    --warn-tx:    #f0c040;
+    --shadow: 0 4px 24px rgba(0,0,0,0.35);
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:var(--tx-b);min-height:100vh;line-height:1.65}
+
+/* ── Header ── */
+.hd{background:var(--teal);color:var(--cream);padding:2.5rem 2rem 2.25rem;position:relative;overflow:hidden}
+.hd::after{
+  content:"str";font-family:'Spectral',serif;font-size:220px;font-weight:600;
+  color:rgba(240,237,229,0.04);position:absolute;right:-20px;top:-30px;
+  pointer-events:none;user-select:none;line-height:1;letter-spacing:-.04em
+}
+.hd-inner{max-width:880px;margin:0 auto;position:relative}
+.hd-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,229,.45);margin-bottom:10px}
+.hd h1{font-family:'Spectral',serif;font-size:34px;font-weight:500;letter-spacing:-.025em;color:var(--cream);margin-bottom:5px}
+.hd-sub{font-size:14px;color:rgba(240,237,229,.55);font-weight:300;max-width:520px}
+.hd-stats{display:flex;gap:28px;margin-top:22px;padding-top:20px;border-top:1px solid rgba(240,237,229,.12)}
+.stat-n{font-family:'Spectral',serif;font-size:24px;font-weight:500;color:var(--cream)}
+.stat-l{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(240,237,229,.4);margin-top:1px}
+
+/* ── Layout ── */
+.main{max-width:880px;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+/* ── Search ── */
+.search-wrap{position:relative;margin-bottom:1.5rem}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--tx-m);font-size:15px;pointer-events:none;user-select:none}
+.search-input{
+  width:100%;padding:15px 120px 15px 46px;
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  background:var(--white);border:1.5px solid var(--cream-md);
+  border-radius:var(--r-lg);color:var(--tx-b);outline:none;
+  transition:border-color .2s,box-shadow .2s
+}
+.search-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,67,70,.1)}
+.search-input::placeholder{color:var(--tx-m)}
+.search-status{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  display:flex;align-items:center;gap:6px
+}
+.ai-badge{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;
+  padding:3px 9px;border-radius:99px;background:var(--teal);color:var(--cream);
+  opacity:0;transition:opacity .2s;white-space:nowrap
+}
+.ai-badge.on{opacity:1}
+.ai-badge.searching{background:var(--teal-mid);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.search-hint{font-size:12px;color:var(--tx-m);margin-top:8px;padding-left:4px;min-height:18px;font-style:italic;transition:color .2s}
+.search-hint.ai{color:var(--teal-mid)}
+
+/* ── Filter pills ── */
+.filter-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1.5rem}
+.pill{
+  font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 14px;
+  border-radius:99px;border:1.5px solid var(--cream-md);
+  background:var(--white);color:var(--tx-s);cursor:pointer;
+  transition:all .15s;user-select:none
+}
+.pill:hover{border-color:var(--teal);color:var(--teal)}
+.pill.active{background:var(--teal);color:var(--cream);border-color:var(--teal)}
+
+/* ── Results bar ── */
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
+.results-count{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--tx-m)}
+.clear-btn{
+  font-size:11px;color:var(--tx-m);background:none;border:none;cursor:pointer;
+  padding:2px 6px;border-radius:4px;transition:color .15s;display:none
+}
+.clear-btn:hover{color:var(--teal)}
+.clear-btn.show{display:block}
+
+/* ── Section labels ── */
+.sec-label{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Spectral',serif;font-size:13px;font-style:italic;color:var(--tx-m);
+  margin:1.75rem 0 .75rem;padding-bottom:7px;
+  border-bottom:1px solid var(--cream-md)
+}
+.sec-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0}
+
+/* ── Cards ── */
+.card{
+  background:var(--white);border:1.5px solid var(--cream-md);
+  border-radius:var(--r-lg);margin-bottom:9px;overflow:hidden;
+  transition:border-color .15s,box-shadow .15s
+}
+.card:hover{border-color:var(--teal-dim)}
+.card.open{border-color:var(--teal);box-shadow:var(--shadow)}
+.card.ai-match{border-left:3px solid var(--teal)}
+
+.card-head{
+  padding:13px 18px;cursor:pointer;
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap
+}
+.method-name{
+  font-family:'JetBrains Mono',monospace;font-size:13.5px;
+  font-weight:500;color:var(--teal)
+}
+.badge{font-size:10px;padding:2px 9px;border-radius:99px;font-family:'JetBrains Mono',monospace;letter-spacing:.02em;white-space:nowrap}
+.b-complex{background:var(--teal);color:var(--cream)}
+.b-cat{background:var(--cream);color:var(--tx-s);border:1px solid var(--cream-md)}
+.ret-badge{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--tx-m);background:var(--cream-lt);
+  padding:2px 10px;border-radius:99px;border:1px solid var(--cream-md);white-space:nowrap
+}
+.card-sig{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--tx-m);padding:0 18px 11px;margin-top:-3px;display:none
+}
+.card.open .card-sig{display:block}
+
+.card-body{
+  display:none;padding:0 18px 18px;
+  border-top:1px solid var(--cream-md)
+}
+.card.open .card-body{display:block}
+
+.desc{
+  font-size:13.5px;color:var(--tx-b);
+  line-height:1.75;padding:14px 0 12px
+}
+
+/* ── Examples ── */
+.examples{display:flex;flex-direction:column;gap:8px}
+.ex{
+  background:var(--cream-lt);border:1px solid var(--cream-md);
+  border-radius:var(--r-md);padding:10px 14px
+}
+.ex-label{
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  color:var(--tx-m);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px
+}
+.ex-code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  color:var(--tx-b);white-space:pre-wrap;line-height:1.7
+}
+.ex-out{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--teal-mid);margin-top:7px;padding-top:7px;
+  border-top:1px dashed var(--cream-dk)
+}
+
+/* ── Gotcha ── */
+.gotcha{
+  margin-top:10px;background:var(--warn-bg);
+  border:1px solid rgba(212,168,0,.35);border-left:3px solid var(--warn-bd);
+  border-radius:var(--r-md);padding:10px 14px;
+  font-size:12.5px;color:var(--warn-tx);line-height:1.65
+}
+
+/* ── Variations ── */
+.variations{margin-top:11px;background:var(--teal-ghost);border-radius:var(--r-md);padding:12px 14px}
+.var-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:.09em;color:var(--tx-m);margin-bottom:8px
+}
+.var-row{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  color:var(--tx-s);margin-bottom:5px;display:flex;gap:10px;flex-wrap:wrap
+}
+.var-row span{color:var(--teal-mid)}
+
+/* ── Empty / Footer ── */
+.empty{text-align:center;padding:3.5rem 1rem;color:var(--tx-m);font-size:14px}
+.empty-emoji{font-size:36px;margin-bottom:14px;filter:grayscale(1);opacity:.5}
+.footer{
+  text-align:center;font-size:11px;color:var(--tx-m);
+  font-family:'JetBrains Mono',monospace;padding:1.25rem;
+  border-top:1px solid var(--cream-md);letter-spacing:.04em
+}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-inner">
+    <div class="hd-tag">Python 3 · String Methods Reference</div>
+    <h1>String Methods</h1>
+    <p class="hd-sub">A complete reference for every built-in string method — with examples, gotchas, and AI-powered search.</p>
+    <div class="hd-stats">
+      <div><div class="stat-n" id="total-count">31</div><div class="stat-l">Methods</div></div>
+      <div><div class="stat-n">7</div><div class="stat-l">Categories</div></div>
+      <div><div class="stat-n">★</div><div class="stat-l">Complex flagged</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input class="search-input" id="search" type="text"
+      placeholder="Describe what you want to do — e.g. &quot;capitalize first letter of each word&quot;"
+      oninput="handleSearch(this.value)" autocomplete="off" spellcheck="false">
+    <div class="search-status">
+      <span class="ai-badge" id="ai-badge">✦ AI</span>
+    </div>
+  </div>
+  <div class="search-hint" id="search-hint">Type a description to find matching methods — AI-powered semantic search</div>
+
+  <div class="filter-bar" id="filters">
+    <button class="pill active" onclick="setFilter('all',this)">All</button>
+    <button class="pill" onclick="setFilter('complex',this)">★ Complex</button>
+    <button class="pill" onclick="setFilter('case',this)">Case</button>
+    <button class="pill" onclick="setFilter('search',this)">Search</button>
+    <button class="pill" onclick="setFilter('split',this)">Split / Join</button>
+    <button class="pill" onclick="setFilter('fmt',this)">Format</button>
+    <button class="pill" onclick="setFilter('check',this)">Check / Validate</button>
+    <button class="pill" onclick="setFilter('clean',this)">Clean</button>
+    <button class="pill" onclick="setFilter('encode',this)">Encode</button>
+  </div>
+
+  <div class="results-bar">
+    <span class="results-count" id="results-count"></span>
+    <button class="clear-btn" id="clear-btn" onclick="clearSearch()">✕ Clear search</button>
+  </div>
+
+  <div id="list"></div>
+</main>
+
+<footer class="footer">python 3.11+ · all methods return new strings (strings are immutable)</footer>
+
+<script>
+const METHODS = [
+  /* ─── CASE ─────────────────────────────────────────── */
+  {
+    name:"upper() / lower()",
+    cat:"case", sig:"str.upper()  |  str.lower()",
+    ret:"str", complex:false,
+    desc:"Return a full copy of the string with all cased characters converted to uppercase or lowercase. Because strings are immutable in Python, neither method modifies the original — it always returns a new string object. Useful for normalization before comparison.",
+    ai_desc:"convert all letters to uppercase or lowercase, change case of entire string",
+    examples:[
+      {label:"basic", code:'"hello World".upper()', out:'→ "HELLO WORLD"'},
+      {label:"chaining", code:'"PYTHON".lower().capitalize()', out:'→ "Python"'},
+      {label:"normalization for comparison", code:'"Python" == "python"       # False\n"Python".lower() == "python"  # True'}
+    ]
+  },
+  {
+    name:"capitalize()",
+    cat:"case", sig:"str.capitalize()",
+    ret:"str", complex:false,
+    desc:"Returns a copy where only the very first character is uppercased and all remaining characters are lowercased. Common mistake: people expect it to only raise the first letter and leave the rest alone — but it actually lowercases everything else.",
+    ai_desc:"capitalize only the first letter of the whole string, first character uppercase rest lowercase",
+    examples:[
+      {label:"basic", code:'"python developer".capitalize()', out:'→ "Python developer"'},
+      {label:"gotcha — resets other chars", code:'"hELLO wORLD".capitalize()', out:'→ "Hello world"   ← everything else lowercased'}
+    ],
+    gotcha:"capitalize() lowercases ALL characters except the first. To capitalize each word, use title() instead."
+  },
+  {
+    name:"title()",
+    cat:"case", sig:"str.title()",
+    ret:"str", complex:false,
+    desc:"Returns a titlecased version of the string where the first character of every 'word' is uppercased. Python defines a 'word boundary' as any non-letter character — so apostrophes, hyphens, and numbers all start a new 'word'.",
+    ai_desc:"capitalize first letter of every word, titlecase, title case each word",
+    examples:[
+      {label:"basic", code:'"python developer".title()', out:'→ "Python Developer"'},
+      {label:"apostrophe boundary gotcha", code:'"it\'s a cat".title()', out:"→ \"It'S A Cat\"   ← apostrophe triggers new word"},
+      {label:"checking if already titlecased", code:'"Hello World".istitle()', out:'→ True'}
+    ],
+    gotcha:"title() is naive about English contractions. For smarter behavior (it's → It's, not It'S), use the string module's capwords() or a proper NLP library."
+  },
+  {
+    name:"swapcase()",
+    cat:"case", sig:"str.swapcase()",
+    ret:"str", complex:false,
+    desc:"Returns a copy where every uppercase letter becomes lowercase and every lowercase letter becomes uppercase. Non-letter characters are unchanged.",
+    ai_desc:"swap uppercase to lowercase and lowercase to uppercase, invert case, toggle case",
+    examples:[
+      {label:"basic", code:'"PyThOn".swapcase()', out:'→ "pYtHoN"'},
+      {label:"from PDF example", code:'"Hello Python!".swapcase()', out:'→ "hELLO pYTHON!"'}
+    ]
+  },
+  {
+    name:"casefold()",
+    cat:"case", sig:"str.casefold()",
+    ret:"str", complex:true,
+    desc:"More aggressive Unicode-aware lowercase for case-insensitive comparisons. While lower() works for ASCII, casefold() handles edge cases in other languages — the German ß becomes 'ss', making it equal to 'SS' after casefolding. Always prefer casefold() over lower() when comparing strings from international sources.",
+    ai_desc:"unicode lowercase for international comparison, aggressive lowercase, german eszett, case insensitive matching",
+    examples:[
+      {label:"German ß example", code:'"Straße".casefold()', out:'→ "strasse"   ← lower() gives "straße"'},
+      {label:"international comparison", code:'"Straße".casefold() == "STRASSE".casefold()', out:'→ True   ← correct Unicode comparison'},
+      {label:"vs lower()", code:'"Straße".lower()', out:'→ "straße"   ← not equal to "strasse"!'}
+    ],
+    gotcha:"Use casefold() instead of lower() for any case-insensitive comparison involving non-ASCII text."
+  },
+  /* ─── SEARCH ────────────────────────────────────────── */
+  {
+    name:"find() / rfind()",
+    cat:"search", sig:"str.find(sub[, start[, end]])  |  str.rfind(sub[, start[, end]])",
+    ret:"int (-1 if not found)", complex:false,
+    desc:"Searches for a substring and returns the index of its first (find) or last (rfind) occurrence. Returns -1 if the substring is not found — never raises an exception. Optional start and end parameters restrict the search to a slice of the string.",
+    ai_desc:"find position of substring, search for character or word, get index of substring, where is a string",
+    examples:[
+      {label:"basic", code:'"python developer".find("o")', out:'→ 4   ← first occurrence'},
+      {label:"with start index", code:'"python developer".find("o", 5)', out:'→ 12  ← skip first occurrence'},
+      {label:"rfind — from the right", code:'"abcabc".rfind("b")', out:'→ 4   ← last occurrence'},
+      {label:"not found returns -1", code:'"hello".find("z")', out:'→ -1  ← safe, no exception'}
+    ]
+  },
+  {
+    name:"index() / rindex()",
+    cat:"search", sig:"str.index(sub[, start[, end]])  |  str.rindex(sub[, start[, end]])",
+    ret:"int (raises ValueError if not found)", complex:true,
+    desc:"Identical to find()/rfind() in behavior, but raises a ValueError exception instead of returning -1 when the substring is not found. This makes absence of the substring an explicit error rather than a silent -1. Use index() when the substring must exist and its absence indicates a programming error.",
+    ai_desc:"find index raises error if not found, strict search throws exception when missing",
+    examples:[
+      {label:"found", code:'"hello".index("l")', out:'→ 2'},
+      {label:"not found — raises!", code:'"hello".index("z")', out:'→ ValueError: substring not found'},
+      {label:"rindex — last occurrence", code:'"hello".rindex("l")', out:'→ 3   ← rightmost "l"'},
+      {label:"with bounds", code:'"hello".index("l", 3)', out:'→ 3   ← start search at index 3'}
+    ],
+    gotcha:"Decision rule: use find() when you don't know if the substring exists (check the -1 result yourself). Use index() when its absence would be a bug — the exception gives you a clear traceback.",
+    variations:[
+      {code:'"hello".rindex("l")', out:'3  ← rightmost match'},
+      {code:'"hello".index("l", 3)', out:'3  ← search from index 3'}
+    ]
+  },
+  {
+    name:"count()",
+    cat:"search", sig:"str.count(sub[, start[, end]])",
+    ret:"int", complex:false,
+    desc:"Counts non-overlapping occurrences of a substring. With optional start/end, restricts the search to a slice. The 'non-overlapping' part is a common gotcha — 'aa' in 'aaa' is found only once.",
+    ai_desc:"count how many times a character appears, number of occurrences, how many times substring found",
+    examples:[
+      {label:"basic", code:'"python developer".count("o")', out:'→ 2'},
+      {label:"with start index (from PDF)", code:'"python developer".count("o", 5)', out:'→ 1   ← only counts from index 5'},
+      {label:"non-overlapping gotcha", code:'"aaa".count("aa")', out:'→ 1   ← NOT 2 (non-overlapping)'}
+    ]
+  },
+  {
+    name:"startswith() / endswith()",
+    cat:"search", sig:"str.startswith(prefix[, start[, end]])  |  str.endswith(suffix[, start[, end]])",
+    ret:"bool", complex:true,
+    desc:"Returns True if the string starts or ends with the given prefix/suffix. The most powerful feature is the tuple argument — you can pass a tuple of strings to check for any of multiple prefixes/suffixes in one call. Also accepts optional start/end indices to restrict where the check begins.",
+    ai_desc:"check if string starts or ends with something, file extension check, prefix suffix test",
+    examples:[
+      {label:"basic", code:'"hello.py".endswith(".py")', out:'→ True'},
+      {label:"tuple — check multiple options", code:'"report.pdf".endswith((".pdf", ".docx", ".txt"))', out:'→ True   ← any match returns True'},
+      {label:"startswith with start index (from PDF)", code:'"Hello, welcome to my world.".startswith("wel", 7, 20)', out:'→ True   ← search starts at index 7'},
+      {label:"f-string example", code:'fname = "data.csv"\nfname.endswith((".csv",".tsv"))', out:'→ True'}
+    ],
+    gotcha:"The tuple form is the preferred pattern for file extension checks — far cleaner than chaining multiple 'or' conditions.",
+    variations:[
+      {code:'f.endswith((".jpg",".png",".gif"))', out:'← multi-extension check'},
+      {code:'line.startswith(("#","//","--"))', out:'← comment detection'}
+    ]
+  },
+  {
+    name:"replace()",
+    cat:"search", sig:"str.replace(old, new[, count])",
+    ret:"str", complex:false,
+    desc:"Returns a copy with all (or up to count) occurrences of old replaced by new. To delete characters, replace them with an empty string ''. The original string is never modified — strings are immutable.",
+    ai_desc:"replace one word with another, substitute characters, remove characters by replacing with empty string",
+    examples:[
+      {label:"basic", code:'"python learner".replace("learner","developer")', out:'→ "python developer"'},
+      {label:"count limit", code:'"aabbaa".replace("a","x", 2)', out:'→ "xxbbaa"   ← only first 2'},
+      {label:"delete characters (from PDF)", code:'"Python".replace("thon","")', out:'→ "Py"   ← replace with empty string'}
+    ]
+  },
+  {
+    name:"translate() + maketrans()",
+    cat:"search", sig:"str.translate(table)  |  str.maketrans(x[, y[, z]])",
+    ret:"str", complex:true,
+    desc:"The most efficient way to perform multiple character substitutions in a single pass. maketrans() builds a translation table mapping Unicode ordinals to replacement characters or None (for deletion). translate() applies the table. Faster than chaining multiple replace() calls because the whole string is scanned once.",
+    ai_desc:"replace multiple characters at once, char by char substitution, delete characters, cipher encode string, remove vowels",
+    examples:[
+      {label:"char-to-char mapping", code:'t = str.maketrans("aeiou", "12345")\n"hello world".translate(t)', out:'→ "h2ll4 w4rld"'},
+      {label:"delete characters", code:'t = str.maketrans("", "", "aeiou")\n"hello world".translate(t)', out:'→ "hll wrld"   ← vowels removed'},
+      {label:"replace and delete together", code:'t = str.maketrans("aeiou", "12345", " ")\n"hello world".translate(t)', out:'→ "h2ll4w4rld"'},
+      {label:"dict with Unicode ordinals (from PDF)", code:'mydict = {83: 80}   # ord("S")→ord("P")\n"Hello Sam!".translate(mydict)', out:'→ "Hello Pam!"'}
+    ],
+    gotcha:"maketrans() expects equal-length strings for the first two args. None in a dict-based table deletes the character. Always faster than multiple .replace() calls for many substitutions.",
+    variations:[
+      {code:'str.maketrans(dict)', out:'← pass dict directly (ord→char or None)'},
+      {code:'str.maketrans("abc","xyz")', out:'← 1:1 map, must be equal length'},
+      {code:'str.maketrans("","",chars)', out:'← deletion-only table'}
+    ]
+  },
+  /* ─── SPLIT / JOIN ───────────────────────────────────── */
+  {
+    name:"split() / rsplit()",
+    cat:"split", sig:"str.split(sep=None, maxsplit=-1)  |  str.rsplit(sep=None, maxsplit=-1)",
+    ret:"list[str]", complex:true,
+    desc:"Splits the string into a list of substrings. The crucial distinction: without sep, it splits on any whitespace and discards empty strings. With sep, it splits on the exact separator character(s) and preserves empty strings. rsplit() works identically but splits from the right — useful with maxsplit to get the last N segments.",
+    ai_desc:"split string into list, break string by separator, tokenize words, split on comma or space, divide string into parts",
+    examples:[
+      {label:"no sep — handles all whitespace", code:'"  hello   world  ".split()', out:'→ ["hello", "world"]   ← strips, no empties'},
+      {label:"with sep — preserves empties", code:'"a,,b,,c".split(",")', out:'→ ["a", "", "b", "", "c"]   ← empties kept'},
+      {label:"maxsplit — limit splits", code:'"a:b:c:d".split(":", maxsplit=2)', out:'→ ["a", "b", "c:d"]   ← rest unsplit'},
+      {label:"rsplit — split from right", code:'"a:b:c:d".rsplit(":", maxsplit=1)', out:'→ ["a:b:c", "d"]'}
+    ],
+    gotcha:'split() with no args ≠ split(" "). No-arg split handles tabs, newlines, and multiple spaces. split(" ") keeps empty strings between consecutive spaces.',
+    variations:[
+      {code:'line.split(maxsplit=1)', out:'→ split on first whitespace only'},
+      {code:'path.rsplit("/", 1)', out:'→ ["directory", "filename"]'}
+    ]
+  },
+  {
+    name:"splitlines()",
+    cat:"split", sig:"str.splitlines(keepends=False)",
+    ret:"list[str]", complex:true,
+    desc:"Splits a string on line boundaries. Crucially, it recognizes many more line endings than just \\n — including \\r, \\r\\n, \\x0b, \\x0c, and several Unicode line separators. This makes it far superior to split('\\n') for handling text files from different operating systems.",
+    ai_desc:"split by newlines, get each line, read lines from multiline string, line by line",
+    examples:[
+      {label:"basic", code:'"line1\\nline2\\nline3".splitlines()', out:'→ ["line1", "line2", "line3"]'},
+      {label:"keep line endings", code:'"a\\r\\nb\\nc".splitlines(keepends=True)', out:'→ ["a\\r\\n", "b\\n", "c"]'},
+      {label:"why not split('\\n')? (from PDF)", code:'"a\\r\\nb".split("\\n")', out:'→ ["a\\r", "b"]   ← \\r left behind!'},
+      {label:"count lines (from PDF)", code:'s = """Python is easy.\\nPython is simple."""\nlen(s.splitlines())', out:'→ 2'}
+    ],
+    gotcha:"Always prefer splitlines() over split('\\n') when reading text that may have come from Windows (\\r\\n) or old Mac (\\r) systems."
+  },
+  {
+    name:"join()",
+    cat:"split", sig:"separator.join(iterable)",
+    ret:"str", complex:true,
+    desc:"Joins an iterable of strings into one, placing the separator between each item. The key confusion: join() is called on the SEPARATOR string, not on the list. Think of it as 'put me between every element'. All items in the iterable must already be strings — use a generator expression to convert numbers.",
+    ai_desc:"join list into string, combine strings with separator, glue strings together, convert list to string",
+    examples:[
+      {label:"basic", code:'", ".join(["apple", "banana", "cherry"])', out:'→ "apple, banana, cherry"'},
+      {label:"no separator", code:'"".join(["h","e","l","l","o"])', out:'→ "hello"'},
+      {label:"common mistake", code:'["a","b","c"].join("-")', out:'→ AttributeError: list has no join()'},
+      {label:"joining with dots (from PDF)", code:'"..".join("python")', out:'→ "p..y..t..h..o..n"'},
+      {label:"numbers need str() first", code:'" ".join(str(x) for x in [1,2,3])', out:'→ "1 2 3"'}
+    ],
+    gotcha:"join() is on the SEPARATOR, not the list. Also: all elements must be strings. Passing mixed types like [1, 'a', 2] raises a TypeError.",
+    variations:[
+      {code:'"\\n".join(lines)', out:'→ multi-line string from list'},
+      {code:'"/".join(parts)', out:'→ file path or URL assembly'}
+    ]
+  },
+  {
+    name:"partition() / rpartition()",
+    cat:"split", sig:"str.partition(sep)  |  str.rpartition(sep)",
+    ret:"tuple[str, str, str]", complex:true,
+    desc:"Splits into exactly 3 parts: (before, separator, after). If not found, partition() returns (original, '', '') and rpartition() returns ('', '', original). Always a 3-tuple — safe to unpack without length checks. Unlike split(), the separator is preserved in the result.",
+    ai_desc:"split into three parts before and after separator, extract before colon or equals, preserve separator when splitting",
+    examples:[
+      {label:"basic (from Jupyter PDF)", code:'"Hello World!, Hi Python!".partition("Hi")', out:'→ ("Hello World!, ", "Hi", " Python!")'},
+      {label:"email parsing", code:'"user@example.com".partition("@")', out:'→ ("user", "@", "example.com")'},
+      {label:"not found", code:'"hello".partition("@")', out:'→ ("hello", "", "")   ← safe to unpack'},
+      {label:"vs split — sep preserved", code:'"a=b=c".partition("=")', out:'→ ("a", "=", "b=c")   ← sep preserved\n"a=b=c".split("=",1)\n→ ["a", "b=c"]   ← sep lost'}
+    ],
+    gotcha:"partition() always returns exactly 3 items — you can always safely write: before, sep, after = s.partition(':').",
+    variations:[
+      {code:'before, _, after = url.partition("?")', out:'← query string parsing'},
+      {code:'_, _, ext = filename.rpartition(".")', out:'← file extension via rpartition'}
+    ]
+  },
+  /* ─── FORMAT ─────────────────────────────────────────── */
+  {
+    name:"format()",
+    cat:"fmt", sig:"str.format(*args, **kwargs)",
+    ret:"str", complex:true,
+    desc:"Replaces {} placeholders with formatted values. Supports positional indexing {0}, named placeholders {name}, and a powerful format specification mini-language inside {}: alignment, width, fill character, precision, number bases, and thousands separators. Predecessor to f-strings but still used for templates and deferred formatting.",
+    ai_desc:"insert variables into string template, format numbers and strings, string interpolation, placeholder substitution",
+    examples:[
+      {label:"positional (from PDF)", code:'"Employee name is {0} and age is {1}".format("Kiran", 25)', out:'→ "Employee name is Kiran and age is 25"'},
+      {label:"named placeholders", code:'"My name is {fname}, age is {age}".format(fname="Srinivas", age=30)', out:'→ "My name is Srinivas, age is 30"'},
+      {label:"float precision", code:'"{:.2f}".format(3.14159)', out:'→ "3.14"'},
+      {label:"alignment & fill", code:'"{:>10}".format("hi")', out:'→ "        hi"   ← right-align in 10 chars'},
+      {label:"padding with zeros", code:'"{:0>5}".format(42)', out:'→ "00042"'}
+    ],
+    gotcha:'Common errors: KeyError when using named placeholders without passing the keyword argument; IndexError when using {0} with keyword-only arguments like format(age=20, name="Alice").',
+    variations:[
+      {code:'"{:,}".format(1000000)', out:'→ "1,000,000"  ← thousands separator'},
+      {code:'"{:#x}".format(255)', out:'→ "0xff"  ← hex with prefix'},
+      {code:'"{:b}".format(10)', out:'→ "1010"  ← binary'},
+      {code:'"{:e}".format(123456)', out:'→ "1.234560e+05"  ← scientific'}
+    ]
+  },
+  {
+    name:'f-strings  f"..."',
+    cat:"fmt", sig:'f"{expression!conversion:format_spec}"',
+    ret:"str", complex:true,
+    desc:"Inline string interpolation introduced in Python 3.6. Expressions inside {} are evaluated at runtime — you can embed arithmetic, function calls, conditionals, and method calls directly. Python 3.8+ added the debug f'{x=}' form that prints both the expression name and its value.",
+    ai_desc:"inline variable in string, f-string formatting, embed expression in string, debug print variable name and value",
+    examples:[
+      {label:"basic (from PDF)", code:'ename="Virat"; age=30\nf"Employee name is {ename} and age is {age}"', out:'→ "Employee name is Virat and age is 30"'},
+      {label:"expressions", code:'f"{2 ** 10} = {1024}"', out:'→ "1024 = 1024"'},
+      {label:"format spec", code:'pi = 3.14159; f"{pi:.2f}"', out:'→ "3.14"'},
+      {label:"debug mode — Python 3.8+", code:'x = 42; f"{x=}"', out:'→ "x=42"   ← name AND value'},
+      {label:"conversion flag", code:"f\"{'hello'!r}\"", out:"→ \"'hello'\"   ← repr()"}
+    ],
+    gotcha:"f-strings evaluate immediately when the line is reached. For logging or template systems where you want lazy evaluation, use .format() or % instead.",
+    variations:[
+      {code:'f"{num:,}"', out:'→ thousands separator'},
+      {code:'f"{val!s}"', out:'→ str()  |  !r = repr()  |  !a = ascii()'},
+      {code:'f"{"*" * 20}"', out:'→ expressions can use operators'}
+    ]
+  },
+  {
+    name:"format_map()",
+    cat:"fmt", sig:"str.format_map(mapping)",
+    ret:"str", complex:true,
+    desc:"Like str.format(**mapping) but accesses the mapping directly without copying it into keyword arguments. The key advantage: if you use a custom dict subclass with __missing__ defined, format_map() will call __missing__ for absent keys instead of raising a KeyError. Useful for template rendering with optional fields.",
+    ai_desc:"format from dictionary, template with optional keys, default value for missing placeholders",
+    examples:[
+      {label:"basic", code:'"{name} is {age}".format_map({"name":"Bob","age":25})', out:'→ "Bob is 25"'},
+      {label:"with defaultdict for missing keys", code:'from collections import defaultdict\nd = defaultdict(lambda: "N/A")\n"{name} from {city}".format_map(d)', out:'→ "N/A from N/A"   ← missing keys handled'}
+    ],
+    gotcha:"format_map() does NOT copy the dict. It calls __getitem__ and __missing__ directly — useful for large or lazily-loaded mappings."
+  },
+  {
+    name:"zfill()",
+    cat:"fmt", sig:"str.zfill(width)",
+    ret:"str", complex:false,
+    desc:"Pads the string on the left with zeros to fill the given width. Correctly handles sign characters — a '-' or '+' at the start of the string is moved in front of the zeros.",
+    ai_desc:"pad with zeros, zero pad number, leading zeros, fixed width number",
+    examples:[
+      {label:"basic", code:'"42".zfill(5)', out:'→ "00042"'},
+      {label:"negative number", code:'"-42".zfill(6)', out:'→ "-00042"   ← sign stays first'},
+      {label:"equivalent f-string", code:'f"{42:05d}"', out:'→ "00042"'}
+    ]
+  },
+  {
+    name:"center() / ljust() / rjust()",
+    cat:"fmt", sig:"str.center(width[, fillchar])  |  str.ljust(width[, fillchar])  |  str.rjust(width[, fillchar])",
+    ret:"str", complex:false,
+    desc:"Aligns the string within a field of the given width. Default fill character is space. ljust() left-aligns (pads right), rjust() right-aligns (pads left), center() centers with equal padding on both sides (extra space goes to the right).",
+    ai_desc:"align text, center string, left align right align, pad with characters, fixed width alignment",
+    examples:[
+      {label:"center (from Jupyter PDF)", code:'"Hi, Python!".center(50, "-")', out:'→ "-------------------Hi, Python!--------------------"'},
+      {label:"ljust and rjust (from Jupyter PDF)", code:'"Python".ljust(30, "-") + " is my favorite"', out:'→ "Python------------------------ is my favorite"'},
+      {label:"rjust", code:'"Python".rjust(30, "-")', out:'→ "------------------------Python"'}
+    ]
+  },
+  /* ─── CHECK / VALIDATE ──────────────────────────────── */
+  {
+    name:"isdigit() / isnumeric() / isdecimal()",
+    cat:"check", sig:"str.isdecimal()  |  str.isdigit()  |  str.isnumeric()",
+    ret:"bool", complex:true,
+    desc:"Three similar but distinct checks. isdecimal() is the strictest — only 0-9. isdigit() also accepts Unicode digit-like characters such as superscripts (²). isnumeric() is the broadest — additionally accepts fractions (½), Roman numerals, and other numeric Unicode. None of them accept '-' or '.', so they can't validate negative numbers or floats.",
+    ai_desc:"check if string is a number, validate digits, test if all characters are numeric, is string an integer",
+    examples:[
+      {label:"simple digits — all agree", code:'"123".isdecimal(), "123".isdigit(), "123".isnumeric()', out:'→ True, True, True'},
+      {label:"superscript ²", code:'"²".isdecimal(), "²".isdigit(), "²".isnumeric()', out:'→ False, True, True'},
+      {label:"fraction ½", code:'"½".isdecimal(), "½".isdigit(), "½".isnumeric()', out:'→ False, False, True'},
+      {label:"float / negative — ALL fail", code:'"-1".isdecimal(), "1.5".isdecimal()', out:'→ False, False'}
+    ],
+    gotcha:"For safely converting user input to int, use try/except around int() rather than isdigit(). isdigit('²') is True but int('²') raises ValueError."
+  },
+  {
+    name:"isalpha() / isalnum() / isspace()",
+    cat:"check", sig:"str.isalpha()  |  str.isalnum()  |  str.isspace()",
+    ret:"bool", complex:false,
+    desc:"Character-set validation methods. isalpha() checks that all characters are letters. isalnum() checks letters and digits only. isspace() checks that all characters are whitespace (spaces, tabs, newlines). All return False on empty strings.",
+    ai_desc:"check if string has only letters, only letters and numbers, check if whitespace only, validate string contents",
+    examples:[
+      {label:"isalpha", code:'"hello".isalpha(), "hello1".isalpha()', out:'→ True, False'},
+      {label:"isalnum", code:'"hello123".isalnum(), "hello!".isalnum()', out:'→ True, False'},
+      {label:"isspace (tabs and newlines count)", code:'"   \\t\\n".isspace()', out:'→ True'},
+      {label:"all return False for empty", code:'"".isalpha(), "".isalnum()', out:'→ False, False'}
+    ]
+  },
+  {
+    name:"islower() / isupper() / istitle()",
+    cat:"check", sig:"str.islower()  |  str.isupper()  |  str.istitle()",
+    ret:"bool", complex:false,
+    desc:"Tests the case of cased characters. islower() returns True if all cased characters are lowercase (non-letter characters are ignored). isupper() returns True if all cased characters are uppercase. istitle() returns True if the string is titlecased per Python's definition.",
+    ai_desc:"check if string is all lowercase all uppercase titlecase, test case of string",
+    examples:[
+      {label:"islower (from PDF)", code:'"python developer".islower()', out:'→ True'},
+      {label:"isupper (from PDF)", code:'"PYTHON".isupper()', out:'→ True'},
+      {label:"istitle", code:'"Hello World".istitle()', out:'→ True'},
+      {label:"non-letters ignored", code:'"hello 123".islower()', out:'→ True   ← digits ignored in check'}
+    ]
+  },
+  {
+    name:"isidentifier() / isprintable()",
+    cat:"check", sig:"str.isidentifier()  |  str.isprintable()",
+    ret:"bool", complex:false,
+    desc:"isidentifier() returns True if the string is a valid Python identifier (variable/function name). isprintable() returns True if all characters are printable — i.e. no control characters like \\n or \\t.",
+    ai_desc:"check if valid variable name, check if string has control characters, is printable string",
+    examples:[
+      {label:"isidentifier (from Jupyter PDF)", code:'"my_var".isidentifier(), "2var".isidentifier()', out:'→ True, False'},
+      {label:"isprintable (from Jupyter PDF)", code:'"Hello!".isprintable()', out:'→ True'},
+      {label:"control chars not printable", code:'"Hello\\n".isprintable()', out:'→ False   ← \\n is not printable'}
+    ]
+  },
+  /* ─── CLEAN ─────────────────────────────────────────── */
+  {
+    name:"strip() / lstrip() / rstrip()",
+    cat:"clean", sig:"str.strip([chars])  |  str.lstrip([chars])  |  str.rstrip([chars])",
+    ret:"str", complex:true,
+    desc:"Removes leading and/or trailing characters. Without an argument, removes whitespace (spaces, tabs, newlines). The chars argument is a SET of individual characters — not a substring — any combination of those characters at the edges is removed.",
+    ai_desc:"remove whitespace from start and end, trim string, strip leading trailing characters, remove spaces",
+    examples:[
+      {label:"whitespace default (from PDF)", code:'"  banana  ".strip()', out:'→ "banana"'},
+      {label:"lstrip only left (from Jupyter PDF)", code:'" Hello Python! ".lstrip()', out:'→ "Hello Python! "   ← right space kept'},
+      {label:"rstrip only right", code:'" Hello Python! ".rstrip()', out:'→ " Hello Python!"   ← left space kept'},
+      {label:"char set — NOT a substring!", code:'"...hello!!!".strip(".!")', out:'→ "hello"   ← removes any . or ! at edges'},
+      {label:"strip gotcha", code:'"pythonpy".strip("py")', out:'→ "thon"   ← strips p, y, h from both ends!'}
+    ],
+    gotcha:"strip(chars) treats the argument as a SET of characters, not a literal string to match. To remove an exact prefix/suffix string, use removeprefix() or removesuffix() (Python 3.9+)."
+  },
+  {
+    name:"removeprefix() / removesuffix()",
+    cat:"clean", sig:"str.removeprefix(prefix)  |  str.removesuffix(suffix)  [Python 3.9+]",
+    ret:"str", complex:false,
+    desc:"Removes the exact prefix or suffix substring if the string starts/ends with it. Returns the original string unchanged if no match — never raises an error. These were added in Python 3.9 specifically to fix the confusion caused by strip().",
+    ai_desc:"remove exact prefix or suffix, remove http from url, remove file extension cleanly, delete start or end of string",
+    examples:[
+      {label:"basic", code:'"Hello World".removeprefix("Hello ")', out:'→ "World"'},
+      {label:"not found — unchanged", code:'"Hello World".removeprefix("Bye")', out:'→ "Hello World"   ← safe, no error'},
+      {label:"vs strip pitfall", code:'"python".strip("py")  # wrong!\n→ "thon"\n"python".removeprefix("py")  # correct\n→ "thon"   ← only removes if exact prefix'}
+    ]
+  },
+  {
+    name:"expandtabs()",
+    cat:"clean", sig:"str.expandtabs(tabsize=8)",
+    ret:"str", complex:false,
+    desc:"Replaces \\t tab characters with spaces, aligning to the next tab stop. Default tab size is 8. The alignment is column-aware — a tab after 3 chars expands to 5 spaces if tabsize=8, not 8 spaces.",
+    ai_desc:"replace tabs with spaces, expand tab characters, tab to space conversion",
+    examples:[
+      {label:"tabsize 4", code:'"a\\tb\\tc".expandtabs(4)', out:'→ "a   b   c"'},
+      {label:"default tabsize 8", code:'"a\\tb".expandtabs()', out:'→ "a       b"'}
+    ]
+  },
+  /* ─── ENCODE ─────────────────────────────────────────── */
+  {
+    name:"encode() / decode()",
+    cat:"encode", sig:'str.encode(encoding="utf-8", errors="strict")  |  bytes.decode(encoding="utf-8", errors="strict")',
+    ret:"bytes / str", complex:true,
+    desc:"encode() converts a str to a bytes object using the specified encoding. decode() is the reverse — called on a bytes object to produce a str. Essential for file I/O, network communication, and anywhere that requires binary data. The errors parameter controls behavior when a character can't be encoded.",
+    ai_desc:"convert string to bytes, encode decode utf-8, handle binary data, unicode encoding, read write bytes",
+    examples:[
+      {label:"encode basic", code:'"hello".encode("utf-8")', out:"→ b'hello'"},
+      {label:"non-ASCII character", code:'"héllo".encode("utf-8")', out:"→ b'h\\xc3\\xa9llo'   ← é = 2 bytes"},
+      {label:"errors ignore", code:'"héllo".encode("ascii", errors="ignore")', out:"→ b'hllo'   ← é silently dropped"},
+      {label:"errors replace", code:'"héllo".encode("ascii", errors="replace")', out:"→ b'h?llo'   ← é → ?"},
+      {label:"round trip", code:'"Python".encode("utf-8").decode("utf-8")', out:'→ "Python"'}
+    ],
+    gotcha:"Always specify encoding explicitly — never rely on the platform default. UTF-8 is almost always correct for modern code.",
+    variations:[
+      {code:'errors="strict"', out:'→ raises UnicodeEncodeError (default)'},
+      {code:'errors="ignore"', out:'→ silently drops unencodable chars'},
+      {code:'errors="replace"', out:'→ inserts ? or \\ufffd'},
+      {code:'errors="xmlcharrefreplace"', out:'→ uses &#xNN; entities'}
+    ]
+  },
+  /* ─── BUILT-INS ON STRINGS ──────────────────────────── */
+  {
+    name:"len()",
+    cat:"search", sig:"len(string)",
+    ret:"int", complex:false,
+    desc:"Built-in function that returns the total number of characters in the string, including spaces, punctuation, and special characters. Because Python strings store Unicode code points, a single emoji or accented character counts as 1.",
+    ai_desc:"count characters, length of string, how many characters, size of string",
+    examples:[
+      {label:"basic (from PDF)", code:'"python developer"  → len = 16\nlen("python developer")', out:'→ 16'},
+      {label:"includes spaces", code:'len("Hello, Python!")', out:'→ 14'},
+      {label:"empty string", code:'len("")', out:'→ 0'}
+    ]
+  },
+  {
+    name:"reversed()",
+    cat:"split", sig:"reversed(string)  →  use with join()",
+    ret:"iterator", complex:true,
+    desc:"Built-in that returns a reversed iterator over the string — not a string itself. To get a reversed string, combine with ''.join(). Alternatively, use slicing with a step of -1: s[::-1]. The reversed() approach is more memory-efficient for very long strings.",
+    ai_desc:"reverse a string, backwards string, flip string, reverse characters order",
+    examples:[
+      {label:"with join (from PDF)", code:"s = 'Python'\n''.join(reversed(s))", out:'→ "nohtyP"'},
+      {label:"reversed() alone", code:"reversed('Python')", out:'→ <reversed object>  ← not a string!'},
+      {label:"slicing alternative", code:'"Python"[::-1]', out:'→ "nohtyP"   ← simpler one-liner'}
+    ],
+    gotcha:"reversed() returns an iterator — wrap with ''.join() to get a string. Or just use s[::-1] which is more Pythonic and commonly preferred."
+  },
+  {
+    name:"sorted()",
+    cat:"split", sig:"sorted(string, reverse=False)",
+    ret:"list[str]", complex:false,
+    desc:"Built-in that sorts the characters of a string alphabetically, returning a list of individual characters. Uppercase letters come before lowercase in default sort (ASCII order). Combine with join() to get a sorted string.",
+    ai_desc:"sort characters in string alphabetically, arrange characters in order, alphabetical order of letters",
+    examples:[
+      {label:"basic (from PDF)", code:"sorted('Python')", out:"→ ['P', 'h', 'n', 'o', 't', 'y']   ← list!"},
+      {label:"back to string", code:"''.join(sorted('Python'))", out:'→ "Phnoty"'},
+      {label:"descending (from PDF)", code:"''.join(sorted('python', reverse=True))", out:'→ "ytonhp"'}
+    ]
+  },
+  {
+    name:"max() / min()",
+    cat:"search", sig:"max(string)  |  min(string)",
+    ret:"str (single char)", complex:false,
+    desc:"Built-in functions that return the character with the highest or lowest Unicode code point in the string. Effectively returns the alphabetically last or first character (with uppercase before lowercase in default ASCII ordering).",
+    ai_desc:"largest character alphabetically, smallest character, max min char in string",
+    examples:[
+      {label:"max char", code:"max('Python')", out:'→ "y"   ← highest Unicode value'},
+      {label:"min char", code:"min('Python')", out:'→ "P"   ← lowest (uppercase < lowercase)'},
+      {label:"on sorted string", code:"max('abcz')", out:'→ "z"'}
+    ]
+  }
+];
+
+/* ── State ── */
+let filter = 'all';
+let searchQuery = '';
+let aiResults = null;   /* null = no ai search, array = filtered names */
+let debounceTimer = null;
+let isSearching = false;
+
+/* ── Helpers ── */
+const $ = id => document.getElementById(id);
+
+function setFilter(f, el) {
+  filter = f;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  aiResults = null;
+  render();
+}
+
+function clearSearch() {
+  $('search').value = '';
+  searchQuery = '';
+  aiResults = null;
+  isSearching = false;
+  clearTimeout(debounceTimer);
+  updateSearchUI('');
+  render();
+}
+
+/* ── AI search via Anthropic API ── */
+async function runAiSearch(query) {
+  isSearching = true;
+  const badge = $('ai-badge');
+  badge.textContent = '⟳ searching';
+  badge.className = 'ai-badge on searching';
+  $('search-hint').textContent = 'Asking Claude to find matching methods…';
+  $('search-hint').className = 'search-hint ai';
+  render(); /* show loading state */
+
+  const compact = METHODS.map(m => `${m.name}: ${m.ai_desc || m.desc.slice(0,120)}`).join('\n');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        system: `You are a Python string methods expert. Given a list of methods and a user's description of what they want to do, return ONLY a JSON array of method names that are relevant. Return ONLY the raw JSON array — no markdown, no explanation, no backticks. If nothing matches, return [].
+
+Methods:
+${compact}`,
+        messages:[{role:'user', content:`Find methods for: "${query}"`}]
+      })
+    });
+    const data = await res.json();
+    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const clean = text.replace(/```json|```/g,'').trim();
+    const names = JSON.parse(clean);
+    aiResults = Array.isArray(names) ? names.map(n=>n.toLowerCase().trim()) : [];
+  } catch(e) {
+    /* fallback to keyword search */
+    aiResults = null;
+  }
+
+  isSearching = false;
+  badge.textContent = '✦ AI';
+  badge.className = 'ai-badge on';
+  const count = getFiltered().length;
+  $('search-hint').textContent = aiResults
+    ? `Found ${count} method${count!==1?'s':''} matching your description`
+    : 'Showing keyword matches (AI search unavailable)';
+  render();
+}
+
+/* ── Debounced search handler ── */
+function handleSearch(val) {
+  searchQuery = val;
+  clearTimeout(debounceTimer);
+  $('clear-btn').className = val.length ? 'clear-btn show' : 'clear-btn';
+
+  if (!val.trim()) {
+    aiResults = null;
+    isSearching = false;
+    updateSearchUI('');
+    render();
+    return;
+  }
+
+  if (val.length < 3) {
+    aiResults = null;
+    updateSearchUI(val, false);
+    render();
+    return;
+  }
+
+  /* short query — try keyword match first, AI after debounce */
+  aiResults = null;
+  updateSearchUI(val, false);
+  render();
+
+  debounceTimer = setTimeout(() => {
+    if (val.length >= 5) runAiSearch(val);
+  }, 650);
+}
+
+function updateSearchUI(val, ai=false) {
+  const badge = $('ai-badge');
+  const hint = $('search-hint');
+  if (!val) {
+    badge.className = 'ai-badge';
+    hint.textContent = 'Type a description to find matching methods — AI-powered semantic search';
+    hint.className = 'search-hint';
+  } else if (val.length < 5) {
+    badge.className = 'ai-badge';
+    hint.textContent = 'Keep typing for AI-powered semantic search…';
+    hint.className = 'search-hint';
+  } else {
+    hint.textContent = 'Searching…';
+    hint.className = 'search-hint ai';
+  }
+}
+
+/* ── Filter logic ── */
+function getFiltered() {
+  return METHODS.filter(m => {
+    /* category filter */
+    if (filter === 'complex' && !m.complex) return false;
+    if (filter !== 'all' && filter !== 'complex' && m.cat !== filter) return false;
+
+    if (!searchQuery.trim()) return true;
+
+    /* AI results */
+    if (aiResults !== null) {
+      return aiResults.some(n => m.name.toLowerCase().includes(n) || n.includes(m.name.toLowerCase().replace(/[()/ ].*/,'')));
+    }
+
+    /* keyword fallback */
+    const q = searchQuery.toLowerCase();
+    return m.name.toLowerCase().includes(q) ||
+           m.desc.toLowerCase().includes(q) ||
+           (m.ai_desc||'').toLowerCase().includes(q) ||
+           m.sig.toLowerCase().includes(q);
+  });
+}
+
+/* ── Toggle card ── */
+function toggleCard(id) {
+  document.getElementById('c'+id).classList.toggle('open');
+}
+
+/* ── Render ── */
+const CAT_LABELS = {
+  case:'Case conversion', search:'Search & replace',
+  split:'Split, join & partition', fmt:'Formatting',
+  check:'Check & validate', clean:'Cleaning & trimming', encode:'Encoding'
+};
+const CAT_NAMES = {
+  case:'Case', search:'Search', split:'Split/Join',
+  fmt:'Format', check:'Check', clean:'Clean', encode:'Encode'
+};
+
+function render() {
+  const filtered = getFiltered();
+  $('results-count').textContent = filtered.length + ' method' + (filtered.length!==1?'s':'');
+  $('total-count').textContent = METHODS.length;
+
+  if (isSearching) {
+    $('list').innerHTML = `<div class="empty"><div class="empty-emoji">⟳</div>Searching for matching methods…</div>`;
+    return;
+  }
+
+  if (!filtered.length) {
+    $('list').innerHTML = `<div class="empty"><div class="empty-emoji">?</div>No methods found.<br>Try rephrasing your description.</div>`;
+    return;
+  }
+
+  let html = '';
+  let lastCat = null;
+  const isAiMode = aiResults !== null;
+  const showSections = filter === 'all' && !isAiMode;
+
+  filtered.forEach((m, i) => {
+    if (showSections && m.cat !== lastCat) {
+      html += `<div class="sec-label"><span class="sec-dot"></span>${CAT_LABELS[m.cat]||m.cat}</div>`;
+      lastCat = m.cat;
+    }
+    const isMatch = isAiMode;
+    html += `
+<div class="card${isMatch?' ai-match':''}" id="c${i}">
+  <div class="card-head" onclick="toggleCard(${i})">
+    <span class="method-name">${m.name}</span>
+    ${m.complex ? '<span class="badge b-complex">★ complex</span>' : ''}
+    <span class="badge b-cat">${CAT_NAMES[m.cat]||m.cat}</span>
+    <span class="ret-badge">→ ${m.ret}</span>
+  </div>
+  <div class="card-sig">${m.sig}</div>
+  <div class="card-body">
+    <p class="desc">${m.desc}</p>
+    <div class="examples">
+      ${m.examples.map(ex=>`
+      <div class="ex">
+        <div class="ex-label">${ex.label}</div>
+        <div class="ex-code">${ex.code}</div>
+        ${ex.out?`<div class="ex-out">${ex.out}</div>`:''}
+      </div>`).join('')}
+    </div>
+    ${m.gotcha?`<div class="gotcha">⚠ ${m.gotcha}</div>`:''}
+    ${m.variations?`
+    <div class="variations">
+      <div class="var-label">Variations</div>
+      ${m.variations.map(v=>`<div class="var-row"><code>${v.code}</code><span>${v.out}</span></div>`).join('')}
+    </div>`:''}
+  </div>
+</div>`;
+  });
+
+  $('list').innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
